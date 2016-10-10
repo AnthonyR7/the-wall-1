@@ -118,8 +118,10 @@ def wall():
         query = "SELECT first_name, last_name, message_text, messages.created_at, messages.updated_at, messages.id FROM messages JOIN users ON messages.user_id = users.id"
         message_list = mysql.query_db(query)
         print(message_list)
-        return render_template('/wall.html', message_list = message_list)
-        #query = "SELECT first_name, last_name, comment_text, comments.created_at, comments.updated_at"
+        query = "SELECT first_name, last_name, comment_text, comments.created_at, comments.updated_at, message_id FROM comments JOIN users ON comments.user_id = users.id"
+        comment_list = mysql.query_db(query)
+        print(comment_list)
+        return render_template('/wall.html', message_list = message_list, comment_list = comment_list)
     else:
         flash("You are not logged in")
         return redirect('/')
