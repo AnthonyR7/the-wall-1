@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>The Wall</title>
+    </head>
+    <body>
+        <header>
+            <h1>The Wall</h1>
+            <form action="/logout" method="post">
+                <input type="submit" name="logout" value="Logout">
+            </form>
+        </header>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div>
+            <h1>{{message}}</h1>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </body>
+</html>
