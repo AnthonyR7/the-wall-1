@@ -10,15 +10,38 @@
             <form action="/logout" method="post">
                 <input type="submit" name="logout" value="Logout">
             </form>
+            <p>Welcome {{session['user']['first_name']}} {{session['user']['last_name']}}</p>
         </header>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
         <div>
-            <h1>{{message}}</h1>
+            <h3>{{message}}</h1>
         </div>
         {% endfor %}
         {% endif %}
         {% endwith %}
+        <h2>Post a messages</h2>
+        <form action="/wall/message" method="post">
+            <textarea name="message" rows="8" cols="80"></textarea>
+            <input type="submit" name="submit" value="Post a message">
+        </form>
+        <div id="messages">
+            <h2>Messages</h2>
+            {% for message in message_list %}
+                <div class="message">
+                    <h3>{{message['first_name']}} {{message['last_name']}} - {{message['created_at']}}</h3>
+                    <p>{{message['message_text']}}</p>
+                </div>
+                <div class="comments">
+                    <h4></h4>
+                </div>
+                <form action="/wall/comment/{{message['messages.id']}}" method="post">
+                    <textarea name="comment" rows="5" cols="60"></textarea>
+                    <input type="submit" name="submit" value="Post a comment">
+                </form>
+            {% endfor %}
+        </div>
+
     </body>
 </html>

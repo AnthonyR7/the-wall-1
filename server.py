@@ -115,9 +115,33 @@ def registration():
 @app.route('/wall')
 def wall():
     if 'user' in session:
-        return render_template('/wall.html')
+        query = "SELECT first_name, last_name, message_text, messages.created_at, messages.updated_at, messages.id FROM messages JOIN users ON messages.user_id = users.id"
+        message_list = mysql.query_db(query)
+        
+        return render_template('/wall.html', message_list = message_list)
     else:
         flash("You are not logged in")
         return redirect('/')
+
+@app.route('/wall/message', methods=['POST'])
+def add_message():
+    message_text = request.form['message']
+    query = "INSERT INTO messages (message_text, created_at, updated_at, user_id) VALUES (:message_text, Now(), Now(), :user_id)"
+    data = {
+        'message_text': message_text,
+        'user_id': session['user']['id']
+    }
+    mysql.query_db(query, data)
+    return redirect('/wall')
+@app.route('/wall/comment/<message_id>', methods=['POST'])
+def add_comment(message_id):
+    query = "INSERT INTO comments (comment_text, created_at, updated_at, user_id, message_id) VALUES (:comment_text, Now(), Now(), :user_id, :message_id)"
+    data = {
+        'comment_text': request.form['comment'],
+        'user_id': session['user']['id'],
+        'message_id': message_id
+    }
+    mysql.query_db(query, data)
+    return redirect('/wall')
 
 app.run(debug=True)
