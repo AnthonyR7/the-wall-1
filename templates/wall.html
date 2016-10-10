@@ -32,6 +32,9 @@
                 <div class="message">
                     <h3>{{message['first_name']}} {{message['last_name']}} - {{message['created_at']}}</h3>
                     <p>{{message['message_text']}}</p>
+                    {% if message['user_id'] == session['user'][id] %}
+                        <a href="/wall/message/delete/message['id']">Delete</a>
+                    {% endif %}
                 </div>
                 <div class="comments">
                     <h3>Comments</h3>
