@@ -43,7 +43,7 @@ def logged_in(pw_hash):
 @app.route('/')
 def index():
     # checks to see if there is a session for request
-    if session['user']:
+    if 'user' in session:
         return redirect('/wall')
     else:
         return render_template('/index.html')
@@ -69,7 +69,7 @@ def login():
 # Handles logout of user
 @app.route('/logout', methods=['POST'])
 def logged_out():
-    del session['user']
+    session.pop('user', None)
     return redirect('/')
 
 # Handles Registration
@@ -122,7 +122,7 @@ def registration():
 # The Wall
 @app.route('/wall')
 def wall():
-    if session['user']:
+    if 'user' in session:
         return render_template('/wall.html')
     else:
         return redirect('/')
