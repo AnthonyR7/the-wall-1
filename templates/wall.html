@@ -34,9 +34,11 @@
                     <p>{{message['message_text']}}</p>
                 </div>
                 <div class="comments">
+                    <h3>Comments</h3>
                     {% for comment in comment_list %}
                         {% if comment['message_id'] == message['id'] %}
-                            <p>{{comment}}</p>
+                            <h4>{{comment['first_name']}} {{comment['last_name']}} - {{comment['created_at']}}</h4>
+                            <p>{{comment['comment_text']}}</p>
                         {% endif %}
                     {% endfor %}
                 </div>

@@ -45,13 +45,15 @@ def login():
         data = {
             'email': request.form['email']
         }
-        user = mysql.query_db(query, data)[0]
-        print("user: {}".format(user))
-        if bcrypt.check_password_hash(user['pw_hash'], request.form['pw']):
-            # Adds user to session
-            session['user'] = user
-            flash("Logged in Successfully")
-            return redirect('/wall')
+        # checks of user matches in db
+        if len(mysql.query_db(query, data)) > 0:
+            user = mysql.query_db(query, data)[0]
+            print("user: {}".format(user))
+            if bcrypt.check_password_hash(user['pw_hash'], request.form['pw']):
+                # Adds user to session
+                session['user'] = user
+                flash("Logged in Successfully")
+                return redirect('/wall')
     flash("Incorrect username or password")
     return redirect('/')
 
@@ -115,10 +117,10 @@ def registration():
 @app.route('/wall')
 def wall():
     if 'user' in session:
-        query = "SELECT first_name, last_name, message_text, messages.created_at, messages.updated_at, messages.id FROM messages JOIN users ON messages.user_id = users.id"
+        query = "SELECT first_name, last_name, message_text, messages.created_at, messages.id FROM messages JOIN users ON messages.user_id = users.id ORDER BY messages.created_at DESC"
         message_list = mysql.query_db(query)
         print(message_list)
-        query = "SELECT first_name, last_name, comment_text, comments.created_at, comments.updated_at, message_id FROM comments JOIN users ON comments.user_id = users.id"
+        query = "SELECT first_name, last_name, comment_text, comments.created_at, message_id FROM comments JOIN users ON comments.user_id = users.id ORDER BY comments.created_at"
         comment_list = mysql.query_db(query)
         print(comment_list)
         return render_template('/wall.html', message_list = message_list, comment_list = comment_list)
