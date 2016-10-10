@@ -27,18 +27,6 @@ def validate(email, first_name, last_name, password):
     if password and len(password) < 8:
         flash("Password must be over 8 characters")
 
-#For keeping user logged in
-def logged_in(pw_hash):
-    query = "SELECT * FROM users WHERE pw_hash=:pw_hash and email=:email"
-    data = {
-        'pw_hash': pw_hash,
-        'email': request.form['email']
-    }
-    user = mysql.query_db(query, data)[0]
-    session['user'] = user['id']
-    print(session['user'])
-
-
 # Index page with registration and login forms
 @app.route('/')
 def index():
@@ -58,9 +46,10 @@ def login():
             'email': request.form['email']
         }
         user = mysql.query_db(query, data)[0]
-        print(user)
+        print("user: {}".format(user))
         if bcrypt.check_password_hash(user['pw_hash'], request.form['pw']):
-            logged_in(user['pw_hash'])
+            # Adds user to session
+            session['user'] = user
             flash("Logged in Successfully")
             return redirect('/wall')
     flash("Incorrect username or password")
@@ -115,7 +104,10 @@ def registration():
             'pw_hash': pw_hash
         }
         mysql.query_db(query, data)
-        logged_in(pw_hash);
+        query = "SELECT * FROM users WHERE email=:email AND first_name=:first_name AND last_name=:last_name"
+        user = mysql.query_db(query, data)[0]
+        # adds user to session
+        session['user'] = user
         return redirect('/wall')
     return redirect('/')
 
