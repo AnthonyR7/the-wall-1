@@ -62,7 +62,7 @@ def login():
         if bcrypt.check_password_hash(user['pw_hash'], request.form['pw']):
             logged_in(user['pw_hash'])
             flash("Logged in Successfully")
-            return render_template('/wall.html')
+            return redirect('/wall')
     flash("Incorrect username or password")
     return redirect('/')
 
@@ -116,7 +116,7 @@ def registration():
         }
         mysql.query_db(query, data)
         logged_in(pw_hash);
-        return render_template('/wall.html')
+        return redirect('/wall')
     return redirect('/')
 
 # The Wall
@@ -125,6 +125,7 @@ def wall():
     if 'user' in session:
         return render_template('/wall.html')
     else:
+        flash("You are not logged in")
         return redirect('/')
 
 app.run(debug=True)
