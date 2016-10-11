@@ -116,13 +116,14 @@ def registration():
 # The Wall
 @app.route('/wall')
 def wall():
+    print(session['user'])
     if 'user' in session:
-        query = "SELECT first_name, last_name, message_text, DATE_FORMAT(messages.created_at, '%M %D %Y %H:%i') AS created_at, messages.id FROM messages JOIN users ON messages.user_id = users.id ORDER BY messages.created_at DESC"
+        query = "SELECT first_name, last_name, message_text, DATE_FORMAT(messages.created_at, '%M %D %Y %H:%i') AS created_at, messages.id, user_id FROM messages JOIN users ON messages.user_id = users.id ORDER BY messages.created_at DESC"
         message_list = mysql.query_db(query)
-        print(message_list)
+        #print(message_list)
         query = "SELECT first_name, last_name, comment_text, DATE_FORMAT(comments.created_at, '%M %D %Y %H:%i') AS created_at, message_id FROM comments JOIN users ON comments.user_id = users.id ORDER BY comments.created_at"
         comment_list = mysql.query_db(query)
-        print(comment_list)
+        #print(comment_list)
         return render_template('/wall.html', message_list = message_list, comment_list = comment_list)
     else:
         flash("You are not logged in")
@@ -147,6 +148,17 @@ def add_comment(message_id):
         'message_id': message_id
     }
     mysql.query_db(query, data)
+    return redirect('/wall')
+
+@app.route('/wall/message/delete/<id>')
+def delete_comment(id):
+    del_comments_query = "DELETE FROM comments WHERE message_id = :id"
+    data = {
+        'id': id
+    }
+    mysql.query_db(del_comments_query, data)
+    del_message_query = "DELETE FROM messages WHERE id = :id"
+    mysql.query_db(del_message_query, data)
     return redirect('/wall')
 
 app.run(debug=True)
